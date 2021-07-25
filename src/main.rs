@@ -92,27 +92,30 @@ impl WindowSystem {
     }
 }
 
-fn now() -> u128 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("get system time")
-        .as_millis()
+macro_rules! now {
+    () => {{
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("get system time")
+            .as_millis()
+        }}        
 }
 
 fn main() {
-    let last_event_ts = Arc::new(Mutex::new(now()));
+    let last_event_ts = Arc::new(Mutex::new(now!()));
     let last_event_ts_clone = last_event_ts.clone();
 
     thread::spawn(move || {
         let mut last_matched_ts : u128 = 0;
         let mut config = Config::new();
+        let ideltime = config.idletime.as_millis();
 
         loop {
             thread::sleep(config.thread_sleep);
-            let now = now();
+            let now = now!();
             let local_last_ts = *last_event_ts.lock().unwrap();
 
-            if last_matched_ts != local_last_ts && now - local_last_ts > config.idletime.as_millis() {
+            if last_matched_ts != local_last_ts && now - local_last_ts > ideltime {
                 last_matched_ts = local_last_ts;
 
                 let datetime: DateTime<Utc> = SystemTime::now().into();
@@ -147,7 +150,7 @@ fn main() {
             let mut event: XEvent = mem::zeroed();
             XNextEvent(window_system.display, &mut event);
 
-            let now = now();
+            let now = now!();
             *last_event_ts_clone.lock().unwrap() = now;
         }
     }
