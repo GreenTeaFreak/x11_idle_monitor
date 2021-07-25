@@ -1,0 +1,15 @@
+[package]
+name = "x11_watch_idle"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+x11 = { version = "2.18.2", features = ["xlib", "xinput"] } #2.18.2
+libc = "0.2"
+chrono= "0.4.19"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = 'abort'
