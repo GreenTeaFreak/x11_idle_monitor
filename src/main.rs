@@ -1,5 +1,3 @@
-extern crate chrono;
-
 use chrono::offset::Utc;
 use chrono::DateTime;
 use std::time::SystemTime;
@@ -49,6 +47,11 @@ impl Config {
 
         let idletime = Duration::from_secs(idle_minutes.parse::<u64>().unwrap() * 60);
         let thread_sleep = Duration::from_secs(thread_sleep_secs.parse::<u64>().unwrap() * 1);
+
+        println!("outfile={}, idletime={}s, thread_sleep={}s", 
+            file, 
+            idletime.as_secs(), 
+            thread_sleep.as_secs());
 
         Config {
             outfile,
