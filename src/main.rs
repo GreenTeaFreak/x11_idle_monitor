@@ -149,12 +149,10 @@ fn main() {
         XISelectEvents(window_system.display, window_system.root, ev_mask_ptr, 1);
         XFlush(window_system.display);
 
+        let mut event: XEvent = mem::zeroed();
         loop {
-            let mut event: XEvent = mem::zeroed();
             XNextEvent(window_system.display, &mut event);
-
-            let now = now!();
-            *last_event_ts_clone.lock().unwrap() = now;
+            *last_event_ts_clone.lock().unwrap() = now!();
         }
     }
 }
