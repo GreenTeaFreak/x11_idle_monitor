@@ -1,4 +1,4 @@
-use chrono::offset::Utc;
+use chrono::offset::Local;
 use chrono::DateTime;
 use std::time::SystemTime;
 
@@ -15,7 +15,7 @@ use x11::xlib::{XOpenDisplay, XDefaultScreenOfDisplay, XRootWindowOfScreen, Disp
                 Window, XFlush, XEvent, XNextEvent, XQueryExtension};
 use std::io::Write;
 
-const DEFAULT_OUT_FILE : &str = "/tmp/X11_WATCHER.txt";
+const DEFAULT_OUT_FILE : &'static str = "/tmp/X11_WATCHER.txt";
 
 pub struct Config {
     outfile: File,
@@ -121,7 +121,7 @@ fn main() {
             if last_matched_ts != local_last_ts && now - local_last_ts > ideltime {
                 last_matched_ts = local_last_ts;
 
-                let datetime: DateTime<Utc> = SystemTime::now().into();
+                let datetime: DateTime<Local> = SystemTime::now().into();
                 let datetime = datetime.format("%d/%m/%Y %T");
                 let msg = format!("idle threshold reached: {}\n", datetime);
                 config.log_to_file(&msg);
